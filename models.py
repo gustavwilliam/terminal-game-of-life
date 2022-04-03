@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Generator
 
 Cell = tuple[int, int]
 
@@ -6,12 +7,14 @@ Cell = tuple[int, int]
 class Board:
     def __init__(
         self,
-        dimensions: tuple[int, int],
+        width: int,
+        height: int,
         cell_width: int = 2,
         grid: defaultdict | None = None,
     ):
         self.grid = grid or defaultdict(bool)
-        self.dimensions = dimensions
+        self.width = width // cell_width
+        self.height = height
         self.cell_width = cell_width
 
     def neighbours(self, cell: Cell) -> int:
@@ -75,12 +78,7 @@ class Board:
             return "█" * self.cell_width
         return " " * self.cell_width
 
-    def render(self) -> str:
-        """Returns a string representation of the board."""
-        rows = []
-        for y in range(self.dimensions[1]):
-            rows.append(
-                "".join([self.render_point((x, y)) for x in range(self.dimensions[0])])
-            )
-
-        return "\n".join(rows)
+    def render_list(self) -> Generator[str, None, None]:
+        """Returns a generator of string representations of the lines of the board."""
+        for y in range(self.height):
+            yield "".join([self.render_point((x, y)) for x in range(self.width)])
