@@ -13,7 +13,7 @@ class Board:
         grid: defaultdict | None = None,
     ):
         self.grid = grid or defaultdict(bool)
-        self.width = width // cell_width
+        self.width = width // cell_width - 1
         self.height = height
         self.cell_width = cell_width
 
@@ -78,7 +78,12 @@ class Board:
             return "█" * self.cell_width
         return " " * self.cell_width
 
-    def render_list(self) -> Generator[str, None, None]:
+    def render_list(self, reference: Cell = (0, 0)) -> Generator[str, None, None]:
         """Returns a generator of string representations of the lines of the board."""
-        for y in range(self.height):
-            yield "".join([self.render_point((x, y)) for x in range(self.width)])
+        for y in range(reference[0], reference[0] + self.height + 1):
+            yield "".join(
+                [
+                    self.render_point((x, y))
+                    for x in range(reference[1], reference[1] + self.width + 1)
+                ]
+            )
