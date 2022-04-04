@@ -21,6 +21,7 @@ class Simulation:
         self.board = board
         self.frame_time = frame_time
         self.render_reference = render_reference
+        self.paused = False
 
     def render(self):
         """Returns a string representation of the simulation."""
@@ -38,14 +39,17 @@ class Simulation:
                 time.sleep(self.frame_time)
 
                 while kb.kbhit():
-                    direction = DIRECTION_MAP[kb.getarrow()]
-                    self.render_reference = (
-                        self.render_reference[0] + direction[0],
-                        self.render_reference[1] + direction[1],
-                    )
-                self.board.simulate_iteration()
+                    key = kb.get_key()
+                    if key in DIRECTION_MAP.keys():
+                        direction = DIRECTION_MAP[key]  # type: ignore
+                        self.render_reference = (
+                            self.render_reference[0] + direction[0],
+                            self.render_reference[1] + direction[1],
+                        )
+
+                if not self.paused:
+                    self.board.simulate_iteration()
 
         finally:
             kb.set_normal_term()
             print("\033[?25h", end="")  # Show cursor again
-            print(flush=True)  # Send out newline

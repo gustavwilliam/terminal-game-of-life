@@ -3,6 +3,8 @@ import sys
 import termios
 from select import select
 
+ARROW_CODES = [65, 67, 66, 68]
+
 
 class KBHit:
     def __init__(self):
@@ -22,30 +24,25 @@ class KBHit:
         """Resets to normal terminal."""
         termios.tcsetattr(self.fd, termios.TCSAFLUSH, self.old_term)
 
-    def getch(self):
+    def get_key(self):
         """
         Returns a keyboard character after kbhit() has been called.
 
-        This should not be called in the same program as getarrow().
-        """
-        return sys.stdin.read(1)
+        If an arrow key was pressed, one of the following codes are returned:
 
-    def getarrow(self):
-        """
-        Returns an arrow-key code after kbhit() has been called.
-
-        Codes are:
         0: up
         1: right
         2: down
         3: left
-
-        This should not be called in the same program as getch().
         """
-        c = sys.stdin.read(3)[2]
-        vals = [65, 67, 66, 68]
-
-        return vals.index(ord(c))
+        key = sys.stdin.read(1)
+        if key == "\033":  # Escape sequence
+            type_, key = sys.stdin.read(2)
+            if type_ == "[":  # Control sequence
+                if ord(key) in ARROW_CODES:
+                    return ARROW_CODES.index(ord(key))
+        else:  # Regular character pressed
+            return key
 
     def kbhit(self):
         """Returns True if keyboard character was hit, False otherwise."""
