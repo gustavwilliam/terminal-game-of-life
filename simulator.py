@@ -46,6 +46,10 @@ class Simulation:
                             self.render_reference[0] + direction[0],
                             self.render_reference[1] + direction[1],
                         )
+                    elif key == " ":
+                        self.paused = not self.paused
+                    elif key == "q":
+                        exit()
 
                 if not self.paused:
                     self.board.simulate_iteration()
