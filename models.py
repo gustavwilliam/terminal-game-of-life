@@ -80,10 +80,16 @@ class Board:
 
     def render_list(self, reference: Cell = (0, 0)) -> Generator[str, None, None]:
         """Returns a generator of string representations of the lines of the board."""
-        for y in range(reference[0], reference[0] + self.height + 1):
+        # Update reference to be in the center of the screen
+        reference = (
+            reference[0] - self.width // 2,
+            reference[1] - self.height // 2,
+        )
+
+        for y in range(reference[1], reference[1] + self.height + 1):
             yield "".join(
                 [
                     self.render_point((x, y))
-                    for x in range(reference[1], reference[1] + self.width + 1)
+                    for x in range(reference[0], reference[0] + self.width + 1)
                 ]
             )
